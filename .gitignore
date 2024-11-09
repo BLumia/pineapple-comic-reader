@@ -1,0 +1,9 @@
+# User files
+*.user
+*.user.*
+
+# Generic build dir
+[Bb]uild/
+
+# IDE/Editor config folder
+.vscode/
