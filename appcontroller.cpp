@@ -2,6 +2,7 @@
 
 #include "dataitems/libraryitem.h"
 #include "dataitems/comicitem.h"
+#include "dataitems/folderitem.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -17,20 +18,11 @@ AppController::AppController(QObject *parent)
     , m_restAccessManager(new QRestAccessManager(m_networkAccessManager, this))
     , m_librariesModel(new QStandardItemModel(this))
     , m_comicsModel(new QStandardItemModel(this))
+    , m_foldersModel(new QStandardItemModel(this))
 {
-    m_librariesModel->setItemRoleNames({
-        {Qt::DisplayRole, "display"},
-        {LibraryItem::IdRole, "libraryId"},
-        {LibraryItem::UuidRole, "uuid"},
-    });
-    m_comicsModel->setItemRoleNames({
-        {Qt::DisplayRole, "display"},
-        {ComicItem::IdRole, "comicId"},
-        {ComicItem::HashRole, "hash"},
-        {ComicItem::PageCountRole, "pageCount"},
-        {ComicItem::CurrentPageRole, "currentPage"},
-        {ComicItem::TypeRole, "type"},
-    });
+    m_librariesModel->setItemRoleNames(LibraryItem::roleNames());
+    m_comicsModel->setItemRoleNames(ComicItem::roleNames());
+    m_foldersModel->setItemRoleNames(FolderItem::roleNames());
 }
 
 void AppController::connectServer(QUrl serverBaseUrl)
@@ -72,8 +64,9 @@ void AppController::updateLibraries()
     });
 }
 
-void AppController::updateComicsInFolder(int folderId)
+void AppController::updateComicsInFolder(QString folderId)
 {
+    qDebug() << folderId;
     m_restAccessManager->get(apiFactory().createRequest(QString("library/%1/folder/%2/content")
                                                             .arg(m_currentLibraryId).arg(folderId)),
                              this, [=](QRestReply &reply){
@@ -83,10 +76,19 @@ void AppController::updateComicsInFolder(int folderId)
             if (libraries && !(*libraries).isEmpty() && (*libraries).isArray()) {
                 const QJsonArray array = (*libraries).array();
                 m_comicsModel->clear();
+                m_foldersModel->clear();
+                // always add a top-leven folder entry...for now
+                QJsonObject root;
+                root["id"] = "1";
+                m_foldersModel->appendRow(new FolderItem(root, "Root"));
                 for (const QJsonValue & value : array) {
-                    QJsonObject comicObj = value.toObject();
-                    qDebug() << comicObj;
-                    m_comicsModel->appendRow(new ComicItem(comicObj, comicObj["file_name"].toString()));
+                    QJsonObject obj = value.toObject();
+                    // qDebug() << obj;
+                    if (obj["type"].toString() == QLatin1String("folder")) {
+                        m_foldersModel->appendRow(new FolderItem(obj, obj["folder_name"].toString()));
+                    } else {
+                        m_comicsModel->appendRow(new ComicItem(obj, obj["file_name"].toString()));
+                    }
                 }
             }
         }

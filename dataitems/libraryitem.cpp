@@ -6,3 +6,12 @@ LibraryItem::LibraryItem(int id, const QString &name, const QString &uuid)
     setData(id, IdRole);
     setData(uuid, UuidRole);
 }
+
+QHash<int, QByteArray> LibraryItem::roleNames()
+{
+    return {
+        {Qt::DisplayRole, "display"},
+        {LibraryItem::IdRole, "libraryId"},
+        {LibraryItem::UuidRole, "uuid"},
+    };
+}

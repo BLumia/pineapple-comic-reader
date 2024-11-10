@@ -13,4 +13,5 @@ public:
     Q_ENUM(Roles)
 
     explicit LibraryItem(int id, const QString &name, const QString &uuid);
+    static QHash<int, QByteArray> roleNames();
 };

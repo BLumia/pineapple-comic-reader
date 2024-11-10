@@ -24,12 +24,13 @@ public:
     Q_PROPERTY(bool selectedComicOpened MEMBER m_currentComicOpened NOTIFY currentComicOpenedChanged FINAL)
     Q_PROPERTY(QStandardItemModel * librariesModel MEMBER m_librariesModel CONSTANT FINAL)
     Q_PROPERTY(QStandardItemModel * comicsModel MEMBER m_comicsModel CONSTANT FINAL)
+    Q_PROPERTY(QStandardItemModel * foldersModel MEMBER m_foldersModel CONSTANT FINAL)
 
     AppController(QObject *parent = nullptr);
 
     Q_INVOKABLE void connectServer(QUrl serverBaseUrl);
     Q_INVOKABLE void updateLibraries();
-    Q_INVOKABLE void updateComicsInFolder(int folderId = 1);
+    Q_INVOKABLE void updateComicsInFolder(QString folderId = "1");
     Q_INVOKABLE void openComic();
     Q_INVOKABLE void closeComic();
     Q_INVOKABLE QString coverImageSource(QString comicHash);
@@ -54,4 +55,5 @@ private:
     QRestAccessManager * m_restAccessManager;
     QStandardItemModel * m_librariesModel;
     QStandardItemModel * m_comicsModel;
+    QStandardItemModel * m_foldersModel;
 };

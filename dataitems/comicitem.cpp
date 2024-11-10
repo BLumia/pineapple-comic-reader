@@ -9,3 +9,15 @@ ComicItem::ComicItem(QJsonObject jsonObj, const QString &name)
     setData(jsonObj["current_page"].toInt(), CurrentPageRole);
     setData(jsonObj["type"].toInt(), TypeRole);
 }
+
+QHash<int, QByteArray> ComicItem::roleNames()
+{
+    return {
+        {Qt::DisplayRole, "display"},
+        {ComicItem::IdRole, "comicId"},
+        {ComicItem::HashRole, "hash"},
+        {ComicItem::PageCountRole, "pageCount"},
+        {ComicItem::CurrentPageRole, "currentPage"},
+        {ComicItem::TypeRole, "type"},
+    };
+}

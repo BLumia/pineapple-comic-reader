@@ -6,6 +6,7 @@
 
 #include "dataitems/libraryitem.h"
 #include "dataitems/comicitem.h"
+#include "dataitems/folderitem.h"
 
 class QmlNetworkAccessManager : public QNetworkAccessManager
 {
@@ -38,6 +39,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableMetaObject(LibraryItem::staticMetaObject, "net.blumia.pineapple.comic.reader.libraryitem", 1, 0, "LibraryItem", "enum");
     qmlRegisterUncreatableMetaObject(ComicItem::staticMetaObject, "net.blumia.pineapple.comic.reader.comicitem", 1, 0, "ComicItem", "enum");
+    qmlRegisterUncreatableMetaObject(FolderItem::staticMetaObject, "net.blumia.pineapple.comic.reader.folderitem", 1, 0, "FolderItem", "enum");
 
     QmlNetworkAccessManagerFactory namFactory;
 

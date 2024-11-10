@@ -16,6 +16,8 @@ qt_add_executable(pcomic
     dataitems/libraryitem.h
     dataitems/comicitem.cpp
     dataitems/comicitem.h
+    dataitems/folderitem.cpp
+    dataitems/folderitem.h
 )
 
 qt_add_qml_module(pcomic
