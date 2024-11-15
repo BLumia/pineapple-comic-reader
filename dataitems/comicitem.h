@@ -14,6 +14,7 @@ public:
         PageCountRole,
         CurrentPageRole,
         TypeRole,
+        AddedTimeRole,
     };
     Q_ENUM(Roles)
 

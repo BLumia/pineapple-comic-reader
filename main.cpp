@@ -33,7 +33,10 @@ public:
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setApplicationName("Pineapple Comic Reader");
     QGuiApplication app(argc, argv);
+    app.setOrganizationName("Chestnut Software");
+    app.setOrganizationDomain("blumia.net");
 
     qputenv("QT_QUICK_CONTROLS_STYLE", QByteArray("FluentWinUI3"));
 

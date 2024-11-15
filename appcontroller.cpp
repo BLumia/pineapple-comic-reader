@@ -4,6 +4,8 @@
 #include "dataitems/comicitem.h"
 #include "dataitems/folderitem.h"
 
+#include <chrono>
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -11,6 +13,8 @@
 #include <QRestAccessManager>
 #include <QRestReply>
 #include <QSettings>
+
+using namespace std::chrono_literals;
 
 AppController::AppController(QObject *parent)
     : QObject(parent)
@@ -30,17 +34,22 @@ void AppController::connectServer(QUrl serverBaseUrl)
     setProperty("connectionState", Connecting);
     serverBaseUrl.setPath("/v2/");
     QNetworkRequestFactory api(serverBaseUrl);
-    m_restAccessManager->get(api.createRequest("version"), this, [=](QRestReply &reply){
+    QNetworkRequest req(api.createRequest("version"));
+    req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+    req.setTransferTimeout(5s);
+    m_restAccessManager->get(req, this, [=](QRestReply &reply){
+        qDebug() << reply.httpStatus() << reply << reply.isHttpStatusSuccess();
         if (reply.isSuccess()) {
-            qDebug() << reply.readText();
             m_requestFactory.setBaseUrl(serverBaseUrl);
             m_requestFactory.clearCommonHeaders();
             QHttpHeaders commonHeaders;
             commonHeaders.append("X-Request-Id", "114514");
             m_requestFactory.setCommonHeaders(commonHeaders);
             setProperty("connectionState", Connected);
+            setProperty("lastErrorMessage", "");
         } else {
             setProperty("connectionState", NotConnected);
+            setProperty("lastErrorMessage", QStringLiteral("%1: %2").arg(reply.httpStatus()).arg(reply.errorString()));
         }
     });
 }

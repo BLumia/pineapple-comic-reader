@@ -11,12 +11,14 @@ Control {
 
     property var curComicIndex: AppController.currentComicModelIndex()
     property bool startReading: AppController.selectedComicOpened
+    readonly property int comicPageCount: dataByRole(ComicItem.PageCountRole)
 
     function dataByRole(role) {
         return AppController.comicsModel.data(curComicIndex, role)
     }
 
     contentItem: ColumnLayout {
+        enabled: !root.startReading
         Image {
             Layout.fillWidth: true
             Layout.maximumHeight: Math.min(root.width / 2, root.height / 2)
@@ -32,7 +34,12 @@ Control {
         }
         Label {
             Layout.preferredWidth: root.width - 10
-            text: `${dataByRole(ComicItem.PageCountRole)} pages`
+            text: "Added: " + new Date(Number(`${dataByRole(ComicItem.AddedTimeRole)}000`)).toLocaleString(Qt.locale())
+            wrapMode: Text.Wrap
+        }
+        Label {
+            Layout.preferredWidth: root.width - 10
+            text: `${comicPageCount} pages`
             wrapMode: Text.Wrap
         }
         Label {
@@ -43,6 +50,7 @@ Control {
         Button {
             Layout.fillWidth: true
             text: "Read"
+            enabled: root.comicPageCount > 0
             onClicked: function() {
                 AppController.openComic()
             }
@@ -60,7 +68,7 @@ Control {
     }
 
     ComicViewer {
-        z: 2
+        parent: Overlay.overlay
         visible: root.startReading
         pageCount: dataByRole(ComicItem.PageCountRole)
     }

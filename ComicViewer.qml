@@ -15,6 +15,12 @@ Pane {
         id: view
         anchors.fill: parent
 
+        onVisibleChanged: function() {
+            if (visible) {
+                forceActiveFocus()
+            }
+        }
+
         Repeater {
             model: root.pageCount
             Loader {
@@ -46,11 +52,12 @@ Pane {
     Pane {
         visible: root.osdVisible
         anchors.fill: parent
-        opacity: 0.6
+        opacity: 0.65
     }
 
     ColumnLayout {
         visible: root.osdVisible
+        enabled: root.osdVisible
         anchors.fill: parent
         Item {
             Layout.fillWidth: true
@@ -65,6 +72,7 @@ Pane {
             text: "Close Comic"
             Layout.fillWidth: true
             onClicked: function() {
+                root.osdVisible = false
                 AppController.closeComic()
             }
         }
@@ -85,5 +93,9 @@ Pane {
                 root.osdVisible = !root.osdVisible
             }
         }
+    }
+
+    Keys.onEscapePressed: function(event) {
+        root.osdVisible = !root.osdVisible
     }
 }
