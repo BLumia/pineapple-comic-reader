@@ -27,6 +27,10 @@ AppController::AppController(QObject *parent)
     m_librariesModel->setItemRoleNames(LibraryItem::roleNames());
     m_comicsModel->setItemRoleNames(ComicItem::roleNames());
     m_foldersModel->setItemRoleNames(FolderItem::roleNames());
+    connect(this, &AppController::currentComicIdChanged, this, [this](){
+        // "selected" is "current"
+        setProperty("selectedComicOpened", false);
+    });
 }
 
 void AppController::connectServer(QUrl serverBaseUrl)
